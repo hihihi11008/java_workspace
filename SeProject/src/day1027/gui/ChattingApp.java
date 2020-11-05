@@ -6,20 +6,21 @@ import java.awt.Panel;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
 public class ChattingApp extends JFrame{
-	Panel p_center;
-	Panel p_south;
+	JPanel p_center;
+	JPanel p_south;
 	JTextArea t_content;
 	JTextField t_text;
 	JButton bt_send;
 	
 	public ChattingApp() {
-		p_center= new Panel();
-		p_south= new Panel();
+		p_center= new JPanel();
+		p_south= new JPanel();
 		t_content= new JTextArea();
 		t_text = new JTextField(20);
 		bt_send=new JButton("Àü¼Û");

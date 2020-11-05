@@ -14,7 +14,7 @@ import java.awt.Frame;
 import java.awt.Button;
 import java.awt.BorderLayout;
 
-class BorderTest{
+class BorderTest{ 
 	public static void main(String[] args){
 		//Frame»ý¼º
 		Frame frame = new Frame();
