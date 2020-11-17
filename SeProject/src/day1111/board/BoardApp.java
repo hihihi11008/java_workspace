@@ -2,101 +2,212 @@ package day1111.board;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import common.image.ImageUtil;
+import day1111.member.BoardMember;
 import day1111.member.Login;
 import day1111.member.RegistForm;
 
 
-
+/*
+ * BoardApp가 모든 
+ * */
 public class BoardApp extends JFrame{
-	JPanel p_north;
-	JButton bt_board, bt_regist, bt_login;
-	JPanel p_center;
-	
-	JPanel [] pages = new JPanel[5]; //화면 전환에 사용될 패널들을 담게될 배열
-	
-	//상수란? 변하지 않는 데이터에 의미를 부여하여 직관성을 높이기 위해 사용한다 
-	public static final int BOARD_LIST=0;
-	public static final int BOARD_WRITE=1;
-	public static final int BOARD_DETAIL=2;
-	public static final int MEMBER_REGIST=3;
-	public static final int MEMBER_LOGIN=4;
-	
-	public BoardApp() {
-		p_north = new JPanel();
-		bt_board = new JButton(ImageUtil.getIcon(this.getClass(), "res/board.png", 90, 35));
-		bt_regist = new JButton(ImageUtil.getIcon(this.getClass(), "res/registPic.png", 90, 35));
-		bt_login = new JButton(ImageUtil.getIcon(this.getClass(), "res/login.png", 90, 35));
-		p_center = new JPanel();
-		pages[0] = new BoardList(this); //게시판목록페이지 
-		pages[1] = new BoardWrite(this); //게시판글쓰기페이지 
-		pages[2] = new BoardDetail(this); //게시판 상세보기 페이지 
-		pages[3] = new RegistForm(this); //게시판 상세보기 페이지 
-		pages[4] = new Login(this); //게시판 상세보기 페이지 
-		
-	
-		
-		//스타일 
-		bt_board.setPreferredSize(new Dimension(90, 35));
-		bt_regist.setPreferredSize(new Dimension(90, 35));
-		bt_login.setPreferredSize(new Dimension(90, 35));
-		
-		//조립 
-		p_north.add(bt_board);
-		p_north.add(bt_regist);
-		p_north.add(bt_login);
-		
-		p_center.add(pages[0]);
-		p_center.add(pages[1]);
-		p_center.add(pages[2]);
-		p_center.add(pages[3]);
-		p_center.add(pages[4]);
-		
-		add(p_north, BorderLayout.NORTH);
-		add(p_center);
-		
-		setVisible(true);
-		setSize(800,600);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		//게시판버튼과 리스너 연결 
-		bt_board.addActionListener((e)->{
-			setPage(BOARD_LIST);
-		});
-		
-		//가입버튼과 리스너 연결 
-		//Lambda표현식 : 함수형 프로그램 표현식이다  참고)javascript에서는 람다를 쿨로저라 한다.
-		//이벤트 구현시, 재정의할 메서드가 달랑 1개인 경우 굳이 , 내부익명클래스라는 표기를 거창하게 사용할 필요가 있는가? 
-		//기능은 같지만 표기법이간결해짐 
-		bt_regist.addActionListener((e)->{
-			setPage(MEMBER_REGIST);
-		});
-		
-		//로그인 버튼과 리스너 연결 
-		bt_login.addActionListener((e)->{
-			setPage(MEMBER_LOGIN);
-		});
-		
-	}
-	
-	//이 프로그램에서 사용되는 모든 페이지를 제어하는 메서드 
-	public void setPage(int showIndex) {//보여주고 싶은 페이지 index 넘겨받자
-		for (int i = 0; i < pages.length; i++) {
-			if (i==showIndex) {
-				pages[i].setVisible(true);
-			}else {
-				pages[i].setVisible(false);
-			}
-		}
-	}
-	
-	public static void main(String[] args) {
-		new BoardApp();
-	}
+   JPanel p_north;
+   JButton bt_board, bt_regist, bt_login;
+   JPanel p_center;
+   
+   private JPanel[] pages=new JPanel[5]; //화면전환에 사용될 패널들을 담게될 배열
+   
+   //상수란? 변하지 않는 데이터에 의미를 부여하여 직관성을 높이기 위해 사용한다
+   public static final int BOARD_LIST=0;
+   public static final int BOARD_WRITE=1;
+   public static final int BOARD_DETAIL=2;
+   public static final int MEMBER_REGIST=3;
+   public static final int MEMBER_LOGIN=4;
+   
+   //모든 페이지들이 사용할 접속정보 객체를 공통 선언
+   //이 컨넥션 객체는 프로그램 가동시 접속 얻기위함
+   private String driver="oracle.jdbc.driver.OracleDriver";
+   private String url="jdbc:oracle:thin:@localhost:1521:XE";
+   private String user="user1104";
+   private String pass="user1104";
+   
+   private Connection con;
+   
+   //로그인 상태 여부를 보관할 변수
+   private boolean hasSession=false; //세션을 보유하고 있는지
+   
+   //회원정보를 보관할 자료형? 
+   //이 변수에 데이터가 채워지는 시점? 로그인 성공시 
+   private BoardMember boardMember; //이 변수에 데이터가 채워지는 시점 
+   
+   
+   public BoardApp() {
+      this.getConnection(); //프레임을 보여주기 직전에 데이터베이스 접속 성공해놓기
+      //생성
+      p_north = new JPanel();
+//   bt_board = new JButton(ImageUtil.getIcon(this.getClass(), "res/board.png", 90, 35));
+      bt_board = new JButton("게시판");
+      bt_regist = new JButton("회원가입");
+//   bt_login = new JButton(ImageUtil.getIcon(this.getClass(), "res/login.png", 90, 35));
+      bt_login = new JButton("로그인");
+      p_center = new JPanel();
+      
+      pages[0] = new BoardList(this); //게시판 목록 페이지 
+      pages[1] = new BoardWrite(this); //게시판 글쓰기 페이지 
+      pages[2] = new BoardDetail(this); //게시판 상세보기 페이지 
+      pages[3] = new RegistForm(this); //게시판 상세보기 페이지 
+      pages[4] = new Login(this); //게시판 상세보기 페이지 
+      
+      //스타일 
+      bt_board.setPreferredSize(new Dimension(100, 35));
+      bt_regist.setPreferredSize(new Dimension(100, 35));
+      bt_login.setPreferredSize(new Dimension(100, 35));
+      
+      //조립 
+      p_north.add(bt_board);
+      p_north.add(bt_regist);
+      p_north.add(bt_login);
+      
+      p_center.add(pages[0]);//중앙 패널에 게시판 목록 붙여넣기
+      p_center.add(pages[1]);//중앙 패널에 게시판 글쓰기 붙여넣기
+      p_center.add(pages[2]);//중앙 패널에 게시판 상세보기 붙여넣기
+      p_center.add(pages[3]);//중앙 패널에 회원가입 붙여넣기
+      p_center.add(pages[4]);//중앙 패널에 로그인 붙여넣기
+      
+      add(p_north, BorderLayout.NORTH);
+      add(p_center);            
+      
+      //디폴트로 보여질 페이지와 안보이게 될 페이지에 대한 처리
+      loginCheck(BoardApp.BOARD_LIST);
+      
+      setVisible(true);
+      setSize(800,600);
+      setLocationRelativeTo(null);
+      setDefaultCloseOperation(EXIT_ON_CLOSE);
+      
+      this.addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent e) {
+            disConnection();//접속해제
+         }
+      });
+      
+      //게시판버튼과 리스너연결
+      bt_board.addActionListener((e)->{
+         setPage(BOARD_LIST);
+      });
+      
+      //가입버튼과 리스너 연결 
+      //Lambda표현식 : 함수형 프로그램 표현식이다 java 8부터 지원
+      //참고) javascript에서는 람다를 클로저라 한다..
+      //이벤트 구현시 , 재정의할 메서드가 달랑 1개인 경우 굳이, 내부익명클래스라는 표기를
+      //거창하게 사용할 필요가 있는가? 기능이 같지만 표기법이 간결해짐
+      //람다표현식은 객체를 마치 함수처럼 간결하게 사용할 수 있도록 지원하는 표기법이다
+      bt_regist.addActionListener((e)->{
+         setPage(BoardApp.MEMBER_REGIST);
+      });
+      
+      //로그인 버튼과 리스너연결
+      bt_login.addActionListener((e)->{
+         setPage(MEMBER_LOGIN);
+      });
+      
+   }
+   
+   //이 프로그램에서 사용되는 모든 페이지를 제어하는 메서드 
+   public void setPage(int showIndex) {//보여주고 싶은 페이지 index  넘겨받자
+      for(int i=0;i<pages.length;i++) {
+         if(i==showIndex) {
+            pages[i].setVisible(true);
+         }else {
+            pages[i].setVisible(false);
+         }
+      }
+   }
+   
+   //접속을 시도하는 메서드
+   public void getConnection() {
+      try {
+         Class.forName(driver); //드라이버 로드
+         con = DriverManager.getConnection(url,user,pass); //접속시도후, 객체반환
+         if(con==null) { //접속실패인경우 메시지 호출
+            JOptionPane.showMessageDialog(this, "데이터베이스 접속하지 못했습니다");
+         }else {
+            this.setTitle(user+"접속중");
+         }
+         
+      } catch (ClassNotFoundException e) {
+         e.printStackTrace();
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+   }
+   
+   //접속을 해제하는 메서드 정의
+   //이 메서드는 윈도우창 닫을때 호출예정
+   public void disConnection() {
+      if(con!=null) {
+         try {
+            con.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+      }
+   }
+   
+   //로그인 여부를 판단해서 만일 로그인하지 않았다면, 로그인 페이지 보여주기
+   public void loginCheck(int page) {
+      if(hasSession==false) { //로그인 하지 않은 상태
+         JOptionPane.showMessageDialog(this, "로그인 필요행");
+         setPage(BoardApp.MEMBER_LOGIN);
+      }else {
+         setPage(page);
+      }
+   }
+   
+   
+   //다른 객체들이 접근할 수 있도록 getter 제공
+   public Connection getCon() {
+      return con;
+   }
+   
+   //getter, setter
+   public boolean isHasSession() {
+	   return hasSession;
+   }
+   
+   public void setHasSession(boolean hasSession) {
+	   this.hasSession = hasSession;
+   }
+   
+   public BoardMember getBoardMember() {
+	   return boardMember;
+   }
+   
+   public void setBoardMember(BoardMember boardMember) {
+	   this.boardMember = boardMember;
+   }
+   
+   //각페이지를 접근할 수 있는 getter
+   public JPanel getPages(int pageName) {//BoardApp.BOARD_LIST
+	   return pages[pageName];
+   }
+   
+   public static void main(String[] args) {
+      new BoardApp();
+   }
+
+
 }

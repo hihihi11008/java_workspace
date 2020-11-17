@@ -49,9 +49,4 @@ public class BoardMember {
 	public void setRegdate(String regdate) {
 		this.regdate = regdate;
 	}
-	
-	
-	
-	
-	
 }
