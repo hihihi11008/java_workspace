@@ -60,8 +60,8 @@ public class BoardApp extends JFrame{
 //   bt_board = new JButton(ImageUtil.getIcon(this.getClass(), "res/board.png", 90, 35));
       bt_board = new JButton("게시판");
       bt_regist = new JButton("회원가입");
-//   bt_login = new JButton(ImageUtil.getIcon(this.getClass(), "res/login.png", 90, 35));
-      bt_login = new JButton("로그인");
+      bt_login = new JButton("로그인\n",ImageUtil.getIcon(this.getClass(), "res/login.png", 20, 20));
+      //bt_login = new JButton("로그인");
       p_center = new JPanel();
       
       pages[0] = new BoardList(this); //게시판 목록 페이지 
@@ -73,7 +73,7 @@ public class BoardApp extends JFrame{
       //스타일 
       bt_board.setPreferredSize(new Dimension(100, 35));
       bt_regist.setPreferredSize(new Dimension(100, 35));
-      bt_login.setPreferredSize(new Dimension(100, 35));
+      bt_login.setPreferredSize(new Dimension(100, 50));
       
       //조립 
       p_north.add(bt_board);

@@ -4,21 +4,17 @@
  	따라서 Home, Product, Q&A, MyPage, Login등의 페이지들이 
  	이 클래스를 상속받을 경우 코드를 중복해서 작성하지 않아도 된다 
  */
-package com.swingmall.admin;
+package soomCoProject.main;
 
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
 public class Page extends JPanel{
-	private AdminMain adminMain;
-	
-	public AdminMain getAdminMain() {
-		return adminMain;
-	}
-	public Page(AdminMain adminMain) {
-		this.adminMain = adminMain;
-		this.setPreferredSize(new Dimension(adminMain.WIDTH, adminMain.HEIGHT-50));
+	MainFrame mainFrame;
+	public Page(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		this.setPreferredSize(new Dimension(600,800));
 		
 	}
 

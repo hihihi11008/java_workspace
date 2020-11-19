@@ -106,9 +106,6 @@ public class AdminMain extends JFrame{
 		this.add(admintype_container);
 		this.add(la_footer, BorderLayout.SOUTH);
 		
-		
-		
-		
 		setSize(WIDTH, HEIGHT);
 		setVisible(true);
 		setLocationRelativeTo(null);

@@ -2,6 +2,7 @@ package com.swingmall.admin.product;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 
 import java.sql.PreparedStatement;
@@ -37,6 +38,7 @@ public class Product extends Page{
 	
 	DBManager dbManager;
 	ProductModel model;
+	RegistForm registForm;
 	
 	public Product(AdminMain adminMain) {
 		
@@ -63,6 +65,9 @@ public class Product extends Page{
 		s1 = new JScrollPane(tree);
 		s2 = new JScrollPane(table);
 		bt_regist = new JButton("등록하기");
+		registForm = new RegistForm(this);		//등록폼 생성
+
+ 
 		
 		//스타일
 		s1.setPreferredSize(new Dimension(200, AdminMain.HEIGHT-100));
@@ -77,16 +82,29 @@ public class Product extends Page{
 		p_center.add(bt_regist);
 		
 		add(p_west, BorderLayout.WEST);
-		add(p_center);
+		add(p_center);//현재 패널이 보더레이아웃이므로, visible(false)는 안됌
+		//add(registForm);
+
+		
+
+		getProductList(null);//모든 상품가져오기 				
 		
 		//tree는 이벤트가 별도로 지원 
 		tree.addTreeSelectionListener((e)->{
 //			System.out.println("나..?");
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-			getProductList(selectedNode.toString());
+			if (selectedNode.toString().equals("상품목록")) {
+				getProductList(null);//모든 상품가져오기 				
+			}else {
+				getProductList(selectedNode.toString());
+			}
+		});
+		
+		bt_regist.addActionListener((e)->{
+			addRemoveContent(p_center, registForm);
 		});
 
-		getProductList(null);//모든 상품가져오기 
+		
 	}
 	
 	//상위 카테고리 가져오기 
@@ -119,7 +137,7 @@ public class Product extends Page{
 		ResultSet rs=null;
 		
 		ArrayList subList= new ArrayList();//상위카테고리에 등록된 하위카테고리 
-		System.out.println(name);
+		//System.out.println(name);
 		
 		String sql="select * from subcategory where topcategory_id=(select topcategory_id from topcategory where name=?)";		
 		try {
@@ -206,6 +224,12 @@ public class Product extends Page{
 			
 		}
 		
+	}
+	//보여질 컨텐트와 가려질 컨텐트를 제어하는 메서드 
+	public void addRemoveContent(Component removeObj, Component addObj) {
+		this.remove(removeObj);
+		this.add(addObj);
+		((JPanel)addObj).updateUI();
 	}
 
 }
