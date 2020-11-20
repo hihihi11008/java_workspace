@@ -20,6 +20,19 @@ import javax.swing.SwingUtilities;
 import common.image.ImageUtil;
 
 public class MainFrame extends JFrame{
+	//상수선언_사이즈
+	public static final int WIDTH= 600;
+//	public static final int HEIGHT= 800;
+//	//최상위 페이지들 
+//	public static final int HOME= 0;
+//	public static final int LOGIN= 1;
+//	public static final int REGIST= 2;
+//	public static final int HEIGHT= 3;
+//	public static final int HEIGHT= 4;
+//	public static final int HEIGHT= 5;
+//	public static final int HEIGHT= 6;
+//	public static final int HEIGHT= 7;
+	
 	JPanel p_main;
 	JPanel p_header,p_navi,p_content,p_theme,p_footer;
 	
@@ -31,7 +44,7 @@ public class MainFrame extends JFrame{
 	JButton[] theme= new JButton[navi_theme.length];
 	
 	//페이지구성
-	//Page[] page = new Page[1];
+	Page[] page = new Page[1];
 	JLabel la_logo, la_info;
 	
 	public MainFrame() {
@@ -51,7 +64,7 @@ public class MainFrame extends JFrame{
 		}
 		
 		//페이지 구성 
-//				page[0]= new LogIn(this);
+				page[0]= new LogIn(this);
 //				page[1]= new Product(this);
 //				page[2]= new Member(this);
 //				page[3]= new Order(this);
@@ -95,7 +108,7 @@ public class MainFrame extends JFrame{
 		
 		
 		setVisible(true);
-		setSize(600, 800);
+		setSize(WIDTH, HEIGHT);
 		setLocationRelativeTo(null);
 		
 		
