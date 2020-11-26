@@ -1,0 +1,9 @@
+jdbc:oracle:thin:@localhost:1521:XE
+jdbc:mysql://localhost/db1105
+
+데이터베이스를 연동 업무의 순서 
+1) DB기종에 알맞는 드라이버를 로드 
+( oracle, mysql, mssql...각각 jar가 필요함 )
+2) 접속
+3) 원하는 쿼리 수행 
+4) 접속해제(특히 스트림 및 DB는 사용 후 반드시 해제하자 )
