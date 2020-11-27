@@ -20,7 +20,7 @@ public class CalendarApp extends Application{
 	int startDayOfWeek; //해당 월의 시작 요일 (1부터 시작함) 
 	int lastDate; // 각 월의 마지막날
 	Box[] box=new Box[7*6];
-	
+
 	public void start(Stage stage) throws Exception {
 		BorderPane borderPane = (BorderPane)FXMLLoader.load(this.getClass().getClassLoader().getResource("day1126/calendar/layout.fxml"));
 		
@@ -113,6 +113,16 @@ public class CalendarApp extends Application{
 		//모든 박스를 다시 초기화!!!
 		for(int i=0;i<box.length;i++){
 			box[i].erase();
+		}
+		
+		getStartDayOfWeek();
+		getLastDate();
+		
+		//각월에 알맞는 데이터 
+		int count = 1;//1일부터 1씩 증가하며 출력될 변수 
+		for (int i = (startDayOfWeek-1); i < (startDayOfWeek-1)+lastDate; i++) {
+			box[i].renderText(Integer.toString(count));
+			count++;
 		}
 	}
 	

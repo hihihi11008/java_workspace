@@ -121,7 +121,6 @@ public class Login extends Page{
 
 		String sql = "select * from shop_member";
 		sql+=" where mid=? and pass=?";
-		
 		try {
 			pstmt = getShopMain().getCon().prepareStatement(sql);
 			pstmt.setString(1, shopMember.getMid());
