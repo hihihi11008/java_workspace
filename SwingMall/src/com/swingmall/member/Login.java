@@ -50,7 +50,7 @@ public class Login extends Page{
 		add(p_content);
 		
 		//아이디 컴포넌트에 포커스올리기 
-//		t_id.requestFocus();
+		t_id.requestFocus();
 		  
 		//회원가입 버튼과 리스너 연결 
 		bt_regist.addActionListener((e)->{
